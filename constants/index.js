@@ -1,0 +1,1 @@
+export const GRID_ROWS_AND_COLUMNS = 66;

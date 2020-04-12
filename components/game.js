@@ -9,6 +9,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
+    Text,
     StyleSheet,
     View,
     TouchableOpacity,
@@ -17,7 +18,7 @@ import {
 } from 'react-native';
 
 import { initGame, onCellClick } from '../actions/game';
-import { GRID_ROWS_AND_COLUMNS } from '../constants/index';
+import { GRID_ROWS_AND_COLUMNS, NUM_OF_COLUMNS } from '../constants/index';
 
 
 
@@ -27,35 +28,68 @@ class Game extends React.Component {
     constructor() {
         super();
         this.state = {
-            grid: {}
+            grid: {},
+            players: ['player1', 'player2'],
+            ballColors: ['green', 'red'],
+            player_turn: null,
+            game_started: false,
+            player_details: {
+                "player1": {
+                    "color": null,
+                    "moves": []
+                },
+                "player2": {
+                    "color": null,
+                    "moves": []
+                }
+            }
         };
     }
 
     componentDidMount() {
-        this.createGrid(GRID_ROWS_AND_COLUMNS)
+        this.initGame(GRID_ROWS_AND_COLUMNS)
     }
 
+    initGame(gridValue) {
+        //Create a grid
+        let items = Array.apply(null, Array(gridValue)).map((v, i) => {
+            return { id: i + 1, isHidden: true, belongs_to: null, color: null };
+        });
 
-    createGrid(val) {
-        let items = Array.apply(null, Array(val)).map((v, i) => {
-            return { id: i + 1, isHidden: true };
-        });
+        //Assiging turn for players
+        let playerTurn = Math.round(Math.random(this.state.players.length));
+        this.state.player_turn = this.state.players[playerTurn];
+        this.state.game_started = true;
+
+        //Assigning Colors
+        this.state.players.forEach((val, index) => {
+            this.state.player_details[val].color = this.state.ballColors[index];
+        })
+
         this.setState({
-            grid: items,
+            grid: items
         });
+
+
     }
 
     renderImage(item) {
         if (!item.isHidden) {
+            let image_url = null;
+            if (item.color == 'green') {
+                image_url = require('../images/green-ball.jpeg');
+            } else {
+                image_url = require('../images/red-ball.jpeg');
+            }
             return (
                 <View>
-                    <Image style={styles.ball} source={require('../images/green-ball.jpeg')} ></Image>
-                    <Image style={styles.ball} source={require('../images/red-ball.jpeg')} ></Image>
-                </View>
+                    <Image style={styles.ball} source={image_url} ></Image>
+                </View >
             );
         } else {
             return null;
         }
+
     }
 
     onCellClick(item) {
@@ -63,14 +97,19 @@ class Game extends React.Component {
             return val.id == item.id;
         })
         this.state.grid[index].isHidden = false;
+        this.state.grid[index].belongs_to = this.state.player_turn;
+        item.color = this.state.player_details[this.state.player_turn].color;
+        const nextPlayerTurn = this.state.players.filter(player => !player.includes(this.state.player_turn));
+        this.state.player_turn = nextPlayerTurn;
         this.setState(this.state.grid);
+
         //this.props.onCellClick(this.state.grid);
     }
-
 
     render() {
         return (
             <View style={styles.MainContainer}>
+                <View><Text>Its {this.state.player_turn}'s turn</Text></View>
                 <FlatList
                     data={this.state.grid}
                     renderItem={({ item }) => (
@@ -84,7 +123,7 @@ class Game extends React.Component {
 
                     )}
                     //Setting the number of column
-                    numColumns={6}
+                    numColumns={NUM_OF_COLUMNS}
                     keyExtractor={item => item.id}
                 />
             </View>

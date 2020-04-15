@@ -18,7 +18,8 @@ import {
 } from 'react-native';
 
 import { initGame, onCellClick } from '../actions/game';
-import { GRID_ROWS_AND_COLUMNS, NUM_OF_COLUMNS } from '../constants/index';
+import { GAME_OBJECT, NUM_OF_COLUMNS } from '../constants/index';
+import { createGrid } from '../utils/grid'
 
 
 
@@ -27,34 +28,16 @@ class Game extends React.Component {
 
     constructor() {
         super();
-        this.state = {
-            grid: {},
-            players: ['player1', 'player2'],
-            ballColors: ['green', 'red'],
-            player_turn: null,
-            game_started: false,
-            player_details: {
-                "player1": {
-                    "color": null,
-                    "moves": []
-                },
-                "player2": {
-                    "color": null,
-                    "moves": []
-                }
-            }
-        };
+        this.state = GAME_OBJECT;
     }
 
     componentDidMount() {
-        this.initGame(GRID_ROWS_AND_COLUMNS)
+        this.initGame();
     }
 
-    initGame(gridValue) {
+    initGame() {
         //Create a grid
-        let items = Array.apply(null, Array(gridValue)).map((v, i) => {
-            return { id: i + 1, isHidden: true, belongs_to: null, color: null };
-        });
+        const gridItems = createGrid();
 
         //Assiging turn for players
         let playerTurn = Math.round(Math.random(this.state.players.length));
@@ -67,7 +50,7 @@ class Game extends React.Component {
         })
 
         this.setState({
-            grid: items
+            grid: gridItems
         });
 
 
@@ -93,23 +76,45 @@ class Game extends React.Component {
     }
 
     onCellClick(item) {
-        const index = this.state.grid.findIndex((val) => {
+        const grid = this.state.grid;
+        const index = grid.findIndex((val) => {
             return val.id == item.id;
         })
-        this.state.grid[index].isHidden = false;
-        this.state.grid[index].belongs_to = this.state.player_turn;
-        item.color = this.state.player_details[this.state.player_turn].color;
-        const nextPlayerTurn = this.state.players.filter(player => !player.includes(this.state.player_turn));
-        this.state.player_turn = nextPlayerTurn;
-        this.setState(this.state.grid);
 
+        if (!grid[index].isHidden && grid[index].belongs_to != this.state.player_turn) {
+            console.log('turn executed!');
+            this.state.invalid_move = true;
+            this.setState(this.state.grid);
+            return;
+        } else if (!grid[index].isHidden && grid[index].belongs_to == this.state.player_turn) {
+            grid[index].times_clicked++;
+            if (grid[index].corners == grid[index].times_clicked) {
+                console.log('check spreading');
+            } else {
+                grid[index].belongs_to = this.state.player_turn;
+                item.color = this.state.player_details[this.state.player_turn].color;
+                const nextPlayerTurn = this.state.players.filter(player => !player.includes(this.state.player_turn));
+                this.state.player_turn = nextPlayerTurn[0];
+                this.setState(grid);
+            }
+        } else {
+            grid[index].isHidden = false;
+            grid[index].belongs_to = this.state.player_turn;
+            item.color = this.state.player_details[this.state.player_turn].color;
+            const nextPlayerTurn = this.state.players.filter(player => !player.includes(this.state.player_turn));
+            this.state.player_turn = nextPlayerTurn[0];
+            this.setState(grid);
+        }
         //this.props.onCellClick(this.state.grid);
     }
 
     render() {
         return (
             <View style={styles.MainContainer}>
-                <View><Text>Its {this.state.player_turn}'s turn</Text></View>
+                <View>
+                    <Text>Its {this.state.player_turn}'s turn</Text>
+                    {this.state.invalid_move ? <Text>Invalid move please try again</Text> : null}
+                </View>
                 <FlatList
                     data={this.state.grid}
                     renderItem={({ item }) => (

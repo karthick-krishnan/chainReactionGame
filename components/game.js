@@ -19,7 +19,7 @@ import {
 
 import { initGame, onCellClick } from '../actions/game';
 import { GAME_OBJECT, NUM_OF_COLUMNS } from '../constants/index';
-import { createGrid } from '../utils/grid'
+import { createGrid, spreadGridBalls } from '../utils/grid'
 
 
 
@@ -28,7 +28,7 @@ class Game extends React.Component {
 
     constructor() {
         super();
-        this.state = GAME_OBJECT;
+        this.state = { ...GAME_OBJECT };
     }
 
     componentDidMount() {
@@ -76,34 +76,35 @@ class Game extends React.Component {
     }
 
     onCellClick(item) {
-        const grid = this.state.grid;
+        let grid = this.state.grid;
         const index = grid.findIndex((val) => {
             return val.id == item.id;
         })
 
+        grid[index].times_clicked++;
+
         if (!grid[index].isHidden && grid[index].belongs_to != this.state.player_turn) {
-            console.log('turn executed!');
             this.state.invalid_move = true;
-            this.setState(this.state.grid);
+            this.setState({ grid: grid });
             return;
         } else if (!grid[index].isHidden && grid[index].belongs_to == this.state.player_turn) {
-            grid[index].times_clicked++;
             if (grid[index].corners == grid[index].times_clicked) {
-                console.log('check spreading');
+                this.setState(spreadGridBalls(this.state, item));
             } else {
                 grid[index].belongs_to = this.state.player_turn;
                 item.color = this.state.player_details[this.state.player_turn].color;
                 const nextPlayerTurn = this.state.players.filter(player => !player.includes(this.state.player_turn));
                 this.state.player_turn = nextPlayerTurn[0];
-                this.setState(grid);
+                this.setState({ grid: grid });
             }
         } else {
+            //first timeClick
             grid[index].isHidden = false;
             grid[index].belongs_to = this.state.player_turn;
             item.color = this.state.player_details[this.state.player_turn].color;
             const nextPlayerTurn = this.state.players.filter(player => !player.includes(this.state.player_turn));
             this.state.player_turn = nextPlayerTurn[0];
-            this.setState(grid);
+            this.setState({ grid: grid });
         }
         //this.props.onCellClick(this.state.grid);
     }

@@ -9,6 +9,8 @@ export const createGrid = () => {
 
     let middleGridVal = noOfColumns + 1;
 
+    
+
     let grid = Array.apply(null, Array(GRID_ROWS_AND_COLUMNS)).map((v, i) => {
         let id = i + 1;
         let corners;
@@ -17,7 +19,7 @@ export const createGrid = () => {
             corners = 2;
         } else if ((id > initialStart) && (id < initialEnd) || (id > lastCellStart) && (id < lastCellEnd)) {
             corners = 3;
-        } else if (id == middleGridVal) {
+        } else if ((id == middleGridVal) || ((id > noOfColumns) && (id % noOfColumns == 0))) {
             corners = 3;
             middleGridVal = middleGridVal + 6;
         } else {
@@ -74,8 +76,6 @@ export const spreadGridBalls = (stateObj, item) => {
             }
         }
 
-        console.log('spreadCells--->', spreadCells);
-
         if (spreadCells && spreadCells[counter]) {
             spreadIndex = spreadCells[counter];
             treeEnd = false;
@@ -104,6 +104,7 @@ export const spreadGridBalls = (stateObj, item) => {
     const nextPlayerTurn = stateObj.players.filter(player => !player.includes(stateObj.player_turn));
     stateObj.player_turn = nextPlayerTurn[0];
     console.log('next player turn', nextPlayerTurn[0]);
+    stateObj.grid_color = stateObj.player_details[stateObj.player_turn].color;
     return stateObj;
 
 }
@@ -112,7 +113,9 @@ const _identifySpreadCells = (index) => {
     let upperCorner = ((index - NUM_OF_COLUMNS) > 0) ? index - NUM_OF_COLUMNS : null;
     let downerCorner = ((index + NUM_OF_COLUMNS) < GRID_ROWS_AND_COLUMNS) ? index + NUM_OF_COLUMNS : null;
     let leftCorner = (index % NUM_OF_COLUMNS) > 0 ? index - 1 : null;
-    let rightCorner = (((index + NUM_OF_COLUMNS) % (NUM_OF_COLUMNS)) > 0) ? index + 1 : null;
+    let rightCorner = (((index + 1) % (NUM_OF_COLUMNS)) > 0) ? index + 1 : null;
+    console.log('index', index);
+    console.log('rightCorner', rightCorner);
     return {
         upperCorner: upperCorner,
         downerCorner: downerCorner,

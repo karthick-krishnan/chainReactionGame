@@ -75,7 +75,6 @@ export const spreadGridBalls = (stateObj, item) => {
                 }
             }
         }
-
         if (spreadCells && spreadCells[counter]) {
             spreadIndex = spreadCells[counter];
             treeEnd = false;

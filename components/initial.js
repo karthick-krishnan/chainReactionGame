@@ -3,7 +3,6 @@
 import React from 'react';
 import {
     View,
-    Text,
     Button
 } from 'react-native';
 
@@ -16,9 +15,12 @@ class Initial extends React.Component {
                     onPress={() => this.props.navigation.navigate('Game')}
                 />
             </View>
+
         );
     }
 };
+
+
 
 
 export default Initial;

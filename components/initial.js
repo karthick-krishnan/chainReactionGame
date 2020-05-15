@@ -28,11 +28,9 @@ class Initial extends React.Component {
                 <Button style={styles.Button} color="error">Points Table</Button>
                 <Footer></Footer>
             </View >
-
         );
     }
 };
-
 
 const styles = StyleSheet.create({
     container: {

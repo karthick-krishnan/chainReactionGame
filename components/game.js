@@ -98,7 +98,6 @@ class Game extends React.Component {
             this.setState({ grid: grid });
             return;
         } else if (!grid[index].isHidden && grid[index].belongs_to == this.state.player_turn) {
-            grid[index].times_clicked++;
             if (grid[index].corners == grid[index].times_clicked) {
                 this.setState(spreadGridBalls(this.state, item));
                 this.checkWinner();

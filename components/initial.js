@@ -8,15 +8,13 @@ import {
 import { Text, Button } from 'galio-framework'
 import Footer from './footer';
 import { getUniqueId } from 'react-native-device-info';
+import { db } from '../config';
+import { saveItem } from '../utils/local-storage';
 
 class Initial extends React.Component {
 
-    componentDidMount() {
-        console.log('uniqueId', getUniqueId());
-    }
-
-    getUserData(navigation) {
-        navigation.navigate('Players');
+    async componentDidMount() {
+        await saveItem('@game', { 'mac_id': getUniqueId() });
     }
 
 
@@ -24,7 +22,7 @@ class Initial extends React.Component {
         return (
             <View style={styles.container}>
                 <Text style={styles.Text} h2>Chain Reaction</Text>
-                <Button style={styles.Button} color="error" onPress={() => this.getUserData(this.props.navigation)}>Start Game</Button>
+                <Button style={styles.Button} color="error" onPress={() => this.props.navigation.navigate('Players')}>Start Game</Button>
                 <Button style={styles.Button} color="error">Points Table</Button>
                 <Footer></Footer>
             </View >

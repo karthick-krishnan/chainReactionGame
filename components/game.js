@@ -21,6 +21,7 @@ import {
 import { initGame, onCellClick } from '../actions/game';
 import { GAME_OBJECT, NUM_OF_COLUMNS } from '../constants/index';
 import { createGrid, spreadGridBalls } from '../utils/grid'
+import { getItem } from '../utils/local-storage'
 
 
 
@@ -32,7 +33,9 @@ class Game extends React.Component {
         this.state = { ...GAME_OBJECT };
     }
 
-    componentDidMount() {
+    async componentDidMount() {
+        const game = await getItem('@game');
+
         this.initGame();
     }
 

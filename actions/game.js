@@ -1,18 +1,16 @@
-
+import { services } from '../services';
 export const INIT_GAME = 'INIT_GAME'
-export const ON_CELL_CLICK = 'ON_CELL_CLICK'
+export const GET_PLAYER_DETAILS = 'GET_PLAYER_DETAILS'
 
-export const initGame = () => {
-    return {
-        type: INIT_GAME,
-    };
-};
-
-
-export const onCellClick = (gridItems) => {
-    return {
-        type: ON_CELL_CLICK,
-        grid_items: gridItems
-
+export const getPlayerDetails = (macId) => async (dispatch) => {
+    try {
+        let data = await services.getPlayerDetails(macId);
+        dispatch({
+            type: GET_PLAYER_DETAILS,
+            payload: data
+        })
+    } catch (ex) {
+        console.log(ex);
     }
 }
+

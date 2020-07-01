@@ -26,10 +26,42 @@ class Initial extends React.Component {
                 <Button style={styles.Button} color="error">Points Table</Button>
                 <Footer></Footer>
             </View >
-
         );
     }
 };
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    Text: {
+        flex: 1,
+        color: "#50C7C7",
+        fontWeight: "bold",
+        top: 60
+    },
+    Button: {
+        width: 100,
+        height: 40,
+        bottom: 200,
+        margin: 10
+    },
+    footer: {
+        fontWeight: "normal",
+        bottom: 30,
+        left: 100
+    },
+    animatedStyles: {
+        width: 44,
+        height: 44,
+        borderRadius: 44 / 2,
+        backgroundColor: 'red'
+    }
+});
+
+
 
 
 const styles = StyleSheet.create({

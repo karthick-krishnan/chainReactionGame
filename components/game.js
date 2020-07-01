@@ -67,9 +67,6 @@ class Game extends React.Component {
         } catch (Ex) {
             console.log('Ex---->', Ex);
         }
-
-
-
     }
 
     renderImage(item) {

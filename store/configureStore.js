@@ -1,9 +1,12 @@
-import { createStore, combineReducers } from 'redux';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
 import gameReducer from '../reducers/game';
+import thunkMiddleware from 'redux-thunk'
 const rootReducer = combineReducers(
     { game: gameReducer }
 );
 const configureStore = () => {
-    return createStore(rootReducer);
+    return createStore(rootReducer, applyMiddleware(
+        thunkMiddleware, // lets us dispatch() functions
+    ));
 }
 export default configureStore;

@@ -20,7 +20,8 @@ import {
 
 import { initGame, onCellClick } from '../actions/game';
 import { GAME_OBJECT, NUM_OF_COLUMNS } from '../constants/index';
-import { createGrid, spreadGridBalls } from '../utils/grid'
+import { getItem } from '../utils/local-storage';
+import { createGrid, spreadGridBalls } from '../utils/grid';
 
 
 
@@ -29,37 +30,43 @@ class Game extends React.Component {
 
     constructor() {
         super();
-        this.state = { ...GAME_OBJECT };
+        this.state = { ...GAME_OBJECT, loading: true };
     }
 
-    componentDidMount() {
-        this.initGame();
+    async componentDidMount() {
+        const game = await getItem('@game');
+        this.state.betAmount = game.betAmount;
+        this.state.player_details['player1'].color = game.player1.color;
+        this.state.player_details['player1'].name = game.player1.name
+        this.state.player_details['player2'].color = game.player2.color;
+        this.state.player_details['player2'].name = game.player2.name;
+        console.log('stateObject', this.state);
+        this.initGame(this.state);
     }
 
     initGame() {
         //Create a grid
-        const gridItems = createGrid();
+        try {
+            const gridItems = createGrid();
 
-        //Assiging turn for players
-        let playerTurn = Math.round(Math.random(this.state.players.length));
-        this.state.player_turn = this.state.players[playerTurn];
-        this.state.game_started = true;
-        //setting up the games
-        this.state.player_details['player1'].game_started = false;
-        this.state.player_details['player2'].game_started = false;
-
-
-        //Assigning Colors
-        this.state.players.forEach((val, index) => {
-            this.state.player_details[val].color = this.state.ballColors[index];
-        })
-
-        this.setState({
-            grid: gridItems,
-            grid_color: this.state.player_details[this.state.player_turn].color
-        });
+            //Assiging turn for players
+            console.log(Math.random(this.state.players.length));
+            let playerTurn = Math.round(Math.random(this.state.players.length));
+            this.state.player_turn = this.state.players[playerTurn];
+            this.state.game_started = true;
+            //setting up the games
+            this.state.player_details['player1'].game_started = false;
+            this.state.player_details['player2'].game_started = false;
 
 
+            this.setState({
+                grid: gridItems,
+                grid_color: this.state.player_details[this.state.player_turn].color
+            });
+
+        } catch (Ex) {
+            console.log('Ex---->', Ex);
+        }
     }
 
     renderImage(item) {

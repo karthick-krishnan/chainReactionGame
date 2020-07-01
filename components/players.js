@@ -7,7 +7,7 @@ import {
     YellowBox
 } from 'react-native';
 import { Text, Button } from 'galio-framework'
-import { getPlayerDetails } from '../actions/game'
+import { getPlayerDetails, savePlayerDetails } from '../actions/game'
 import { getItem, mergeItem } from '../utils/local-storage';
 import InputSpinner from 'react-native-input-spinner';
 import { connect } from 'react-redux';
@@ -16,14 +16,11 @@ class Players extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { loading: true };
     }
 
     async componentDidMount() {
         const game = await getItem('@game');
         this.props.getPlayerDetails(game.mac_id);
-        await mergeItem('@game', this.props.playerDetails);
-        this.setState({ loading: false })
     }
 
 
@@ -33,8 +30,13 @@ class Players extends React.Component {
         this.setState(this.props.playerDetails);
     }
 
+    async savePlayerDetails() {
+        await mergeItem('@game', this.props.playerDetails);
+        this.props.navigation.navigate('Game');
+    }
+
     render() {
-        if (!this.state.loading) {
+        if (this.props.isloading != null && !this.props.isloading) {
             const { player1, player2, betAmount } = this.props.playerDetails;
             return (
                 <View style={styles.container}>
@@ -74,7 +76,7 @@ class Players extends React.Component {
                         </View>
                         <Text h5 style={styles.HeaderText}> Good to go ?</Text>
                         <View style={styles.confirmationButton}>
-                            <Button iconSize={15} style={styles.Button} onPress={() => this.props.navigation.navigate('Game')}>Yes</Button>
+                            <Button iconSize={15} style={styles.Button} onPress={() => this.savePlayerDetails()}>Yes</Button>
                             <Button iconSize={30} style={styles.Button} onPress={() => this.props.navigation.navigate('Initial')}>No</Button>
                         </View>
                     </View>
@@ -94,7 +96,8 @@ class Players extends React.Component {
 
 const mapStateToProps = (state) => {
     return {
-        playerDetails: state.game.playerDetails
+        playerDetails: state.game.playerDetails,
+        isloading: state.game.loading
     }
 }
 
@@ -102,6 +105,9 @@ function mapDispatchToProps(dispatch) {
     return ({
         getPlayerDetails: (macId) => {
             dispatch(getPlayerDetails(macId))
+        },
+        savePlayerDetails: (macId) => {
+            dispatch(savePlayerDetails(macId))
         }
     })
 }

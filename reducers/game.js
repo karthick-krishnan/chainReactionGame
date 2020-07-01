@@ -3,7 +3,7 @@ export default function game(game = {}, action) {
         case 'INIT_GAME':
             return { value: count }
         case 'GET_PLAYER_DETAILS':
-            return { playerDetails: action.payload }
+            return { playerDetails: action.payload, loading: false }
         default:
             return game;
     }

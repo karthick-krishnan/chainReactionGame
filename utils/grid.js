@@ -9,8 +9,6 @@ export const createGrid = () => {
 
     let middleGridVal = noOfColumns + 1;
 
-    
-
     let grid = Array.apply(null, Array(GRID_ROWS_AND_COLUMNS)).map((v, i) => {
         let id = i + 1;
         let corners;

@@ -11,10 +11,15 @@ export const services = {
             const player1 = data.players.filter(val => val.id == winner_id)[0];
             const player2 = data.players.filter(val => val.id == loser_id)[0];
             playerDetails = { ...{ 'player1': player1, 'player2': player2, 'betAmount': bet_amount } }
+            console.log('playerDetails', playerDetails);
             return playerDetails;
+
         } catch (ex) {
-            console.log(ex);
+            console.log('exceptopn', ex);
         }
+    },
+    savePlayerDetails: async (macId) => {
+        let snapshot = await db.ref(`${macId}`).once('value');
 
     }
 }

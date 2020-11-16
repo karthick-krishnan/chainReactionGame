@@ -5,10 +5,10 @@ import {
     View,
     StyleSheet
 } from 'react-native';
-import { Text, Button } from 'galio-framework'
+import { Text } from 'galio-framework';
 import Footer from './footer';
 import { getUniqueId } from 'react-native-device-info';
-import { db } from '../config';
+import Button from '@ant-design/react-native/lib/button';
 import { saveItem } from '../utils/local-storage';
 
 class Initial extends React.Component {
@@ -22,8 +22,8 @@ class Initial extends React.Component {
         return (
             <View style={styles.container}>
                 <Text style={styles.Text} h2>Chain Reaction</Text>
-                <Button style={styles.Button} color="error" onPress={() => this.props.navigation.navigate('Players')}>Start Game</Button>
-                <Button style={styles.Button} color="error">Points Table</Button>
+                <Button type="primary" onPress={() => this.props.navigation.navigate('Players')}>Start Game</Button>
+                <Button type="primary" onPress={() => this.props.navigation.navigate('PointsTable')}>Points Table</Button>
                 <Footer></Footer>
             </View >
 
@@ -34,7 +34,7 @@ class Initial extends React.Component {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flex: 2,
         alignItems: 'center',
         justifyContent: 'center'
     },
@@ -45,10 +45,10 @@ const styles = StyleSheet.create({
         top: 60
     },
     Button: {
-        width: 100,
+        width: 200,
         height: 40,
-        bottom: 200,
-        margin: 10
+        bottom: -50
+
     },
     footer: {
         fontWeight: "normal",
